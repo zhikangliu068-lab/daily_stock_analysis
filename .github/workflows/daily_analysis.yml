@@ -207,3 +207,16 @@ jobs:
             echo "📜 最近日志（最后 30 行）:"
             tail -30 logs/stock_analysis_*.log 2>/dev/null || echo "无日志"
           fi
+          
+          - name: 飞书最终通知
+            if: always() # 无论 Python 脚本是否报错，这一步都会强制执行
+            uses: foxundermoon/feishu-action@v2
+            with:
+              url: ${{ secrets.FEISHU_WEBHOOK_URL }}
+              secret: ${{ secrets.FEISHU_SECRET }}
+              msg_type: text
+              content: |
+                {
+                  "text": "📢 股票分析任务已运行结束\n状态：请检查 Action 日志确认 AI 是否限流\n关键词：决策仪表盘"
+                }
+
